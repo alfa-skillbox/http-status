@@ -1,0 +1,1464 @@
+{
+	"info": {
+		"_postman_id": "3f75bc6d-08c4-4dc1-b787-a2bb9142960c",
+		"name": "skillbox-http-status",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "2xx",
+			"item": [
+				{
+					"name": "200 OK",
+					"item": [
+						{
+							"name": "200/create",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.environment.set(\"create_id\", pm.response.text());",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"strictSSL": false
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "value",
+											"value": "Snatch",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}{{2xx}}/create",
+									"host": [
+										"{{host}}{{2xx}}"
+									],
+									"path": [
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "200/read",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Read is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.have.body();",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{2xx}}/read/?id={{create_id}}",
+									"host": [
+										"{{host}}{{2xx}}"
+									],
+									"path": [
+										"read",
+										""
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{create_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "200/delete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Delete is OK\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.have.body();",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{host}}{{2xx}}/delete/?id={{create_id}}",
+									"host": [
+										"{{host}}{{2xx}}"
+									],
+									"path": [
+										"delete",
+										""
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{create_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "201/204",
+					"item": [
+						{
+							"name": "201/updateIfNotExist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var curr_create_id = pm.environment.get(\"create_id\");",
+											"pm.test(\"Put is Created or No Content after next request to the same id\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    pm.response.to.have.header(\"Location\", \"/2xx/read/\" + curr_create_id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var curr_create_id = parseInt(pm.environment.get(\"create_id\"));",
+											"curr_create_id = curr_create_id + 1;",
+											"pm.environment.set(\"create_id\", curr_create_id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"strictSSL": false
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{2xx}}/update/{{create_id}}/?value=Tommy the Tit",
+									"host": [
+										"{{host}}{{2xx}}"
+									],
+									"path": [
+										"update",
+										"{{create_id}}",
+										""
+									],
+									"query": [
+										{
+											"key": "value",
+											"value": "Tommy the Tit"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "204/updateIfExist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Return 204 if item already exist and has not been updated\", function () {",
+											"    pm.response.to.have.status(204);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Etag",
+										"value": "\"Boris The Blade\"",
+										"type": "text"
+									},
+									{
+										"key": "If-None-Match",
+										"value": "* /\"Boris The Blade\"",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}{{2xx}}/update/{{create_id}}/?value=Boris The Blade",
+									"host": [
+										"{{host}}{{2xx}}"
+									],
+									"path": [
+										"update",
+										"{{create_id}}",
+										""
+									],
+									"query": [
+										{
+											"key": "value",
+											"value": "Boris The Blade"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "200/write&read",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const createPostRequest = {",
+									"  url: 'http://localhost:8080/2xx/create',",
+									"  method: 'POST',",
+									"  header: [",
+									"      'Authorization: Basic dXNlcjp0ZXN0',",
+									"      'Content-Type: application/x-www-form-urlencoded'",
+									"      ],",
+									"  body: {",
+									"    mode: 'urlencoded',",
+									"    urlencoded: ['value=BorisBritva']",
+									"  }",
+									"};",
+									"console.log(\"Sending create request for getting id\");",
+									"pm.sendRequest(createPostRequest, function (err, response) {",
+									"    var resposne_id = response.text()",
+									"    console.log(\"response_id = \" + resposne_id);",
+									"    pm.collectionVariables.set(\"create_id\", resposne_id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{2xx}}/read/?id={{create_id}}",
+							"host": [
+								"{{host}}{{2xx}}"
+							],
+							"path": [
+								"read",
+								""
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{create_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3xx",
+			"item": [
+				{
+					"name": "Демонстрация ответа при редиректе",
+					"item": [
+						{
+							"name": "302/redirect",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.status(302);",
+											"    pm.response.to.have.header(\"Location\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{3xx}}/302/redirect",
+									"host": [
+										"{{host}}{{3xx}}"
+									],
+									"path": [
+										"302",
+										"redirect"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Перенаправляющие в КЕШ",
+					"item": [
+						{
+							"name": "304/Not Modified",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var saved_id = pm.environment.get(\"create_id\");",
+											"var host = pm.environment.get(\"host\");",
+											"var xx3 = pm.environment.get(\"3xx\");",
+											"var lastModified = pm.response.headers.get(\"Last-Modified\");",
+											"",
+											"const readGetRequest = {",
+											"  url: '' + host + xx3 + '/304/readCached/?id=' + saved_id,",
+											"  method: 'GET',",
+											"  header: [",
+											"      'If-Unmodified-Since: Sat, 17 Sep 2022 01:00:00 GMT'",
+											"      ]",
+											"};",
+											"",
+											"console.log(\"Sending read request to get 304 response\");",
+											"pm.sendRequest(readGetRequest, function (err, response) {",
+											"});",
+											"",
+											"pm.test(\"Check 304 response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.have.header(\"Last-Modified\");",
+											"});",
+											"",
+											"pm.test(\"Check 304 response\", function () {",
+											"    pm.response.to.have.status(304);",
+											"    pm.response.to.have.header(\"Last-Modified\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var host = pm.environment.get(\"host\");",
+											"var xx2 = pm.environment.get(\"2xx\");",
+											"",
+											"const createPostRequest = {",
+											"  url: '' + host + xx2 + '/create',",
+											"  method: 'POST',",
+											"  header: [",
+											"      'Content-Type: application/x-www-form-urlencoded'",
+											"      ],",
+											"  body: {",
+											"    mode: 'urlencoded',",
+											"    urlencoded: ['value=304Test']",
+											"  }",
+											"};",
+											"",
+											"console.log(\"Sending create request for getting id\");",
+											"pm.sendRequest(createPostRequest, function (err, response) {",
+											"    var resposne_id = response.text()",
+											"    console.log(\"response_id = \" + resposne_id);",
+											"    pm.collectionVariables.set(\"create_id\", resposne_id);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "If-Unmodified-Since",
+										"value": "Sat, 17 Sep 2022 01:00:00 GMT",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{host}}{{3xx}}/304/readCached/?id={{create_id}}",
+									"host": [
+										"{{host}}{{3xx}}"
+									],
+									"path": [
+										"304",
+										"readCached",
+										""
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{create_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Может поменять метода запроса на GET",
+					"item": [
+						{
+							"name": "302/redirect",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.have.body(\"GET result\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"followRedirects": true,
+								"strictSSL": false
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{host}}{{3xx}}/301/redirect",
+									"host": [
+										"{{host}}{{3xx}}"
+									],
+									"path": [
+										"301",
+										"redirect"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "301/redirect",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.have.body(\"GET result\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"followRedirects": true,
+								"strictSSL": false
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{host}}{{3xx}}/302/redirect",
+									"host": [
+										"{{host}}{{3xx}}"
+									],
+									"path": [
+										"302",
+										"redirect"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "НЕ изменяет метода запроса",
+					"item": [
+						{
+							"name": "OK POST-POST",
+							"item": [
+								{
+									"name": "307/redirectToPost",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.have.body(\"POST result\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"followRedirects": true,
+										"strictSSL": false
+									},
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{host}}{{3xx}}/307/redirectToPost",
+											"host": [
+												"{{host}}{{3xx}}"
+											],
+											"path": [
+												"307",
+												"redirectToPost"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "308/redirectToPost",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.have.body(\"POST result\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"followRedirects": true,
+										"strictSSL": false
+									},
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{host}}{{3xx}}/308/redirectToPost",
+											"host": [
+												"{{host}}{{3xx}}"
+											],
+											"path": [
+												"308",
+												"redirectToPost"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Error POST-GET",
+							"item": [
+								{
+									"name": "307/redirectToGet",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.status(405);",
+													"    pm.response.to.have.header(\"Allow\", \"GET\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"followRedirects": true,
+										"strictSSL": false
+									},
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{host}}{{3xx}}/307/redirectToGet",
+											"host": [
+												"{{host}}{{3xx}}"
+											],
+											"path": [
+												"307",
+												"redirectToGet"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "308/redirectToGet",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.status(405);",
+													"    pm.response.to.have.header(\"Allow\", \"GET\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"followRedirects": true,
+										"strictSSL": false
+									},
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{host}}{{3xx}}/308/redirectToGet",
+											"host": [
+												"{{host}}{{3xx}}"
+											],
+											"path": [
+												"308",
+												"redirectToGet"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Меняет ВСЕ методы на GET",
+					"item": [
+						{
+							"name": "303/redirect",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.have.body(\"GET result\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"strictSSL": false,
+								"followRedirects": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "value",
+											"value": "Bullet-Tooth Tony  ",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}{{3xx}}/303/redirect",
+									"host": [
+										"{{host}}{{3xx}}"
+									],
+									"path": [
+										"303",
+										"redirect"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "4xx",
+			"item": [
+				{
+					"name": "400",
+					"item": [
+						{
+							"name": "400/wrong mime type",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request with wrongmime type is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"    pm.response.to.have.body();",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "user",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "test",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "If-Modified-Since",
+										"value": "Sun, 18 Sep 2022 01:01:01 GMT",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "wrong_value_name",
+											"value": "SOL",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}{{4xx}}/400/binding",
+									"host": [
+										"{{host}}{{4xx}}"
+									],
+									"path": [
+										"400",
+										"binding"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400/no required param",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request without required parameter is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"    pm.response.to.have.body();",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "user",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "test",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "If-Modified-Since",
+										"value": "Sun, 18 Sep 2022 01:01:01 GMT",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}{{4xx}}/400/requiredParam",
+									"host": [
+										"{{host}}{{4xx}}"
+									],
+									"path": [
+										"400",
+										"requiredParam"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "404",
+					"item": [
+						{
+							"name": "404/no such handler",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"No such handler has been found\", function () {",
+											"    pm.response.to.have.status(404);",
+											"    pm.response.to.have.body();",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "user",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "test",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "If-Modified-Since",
+										"value": "Sun, 18 Sep 2022 01:01:01 GMT",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}{{4xx}}/404/fake-endpoint",
+									"host": [
+										"{{host}}{{4xx}}"
+									],
+									"path": [
+										"404",
+										"fake-endpoint"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "404/cant find such id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Can't find such id\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "user",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "test",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "If-Modified-Since",
+										"value": "Sun, 18 Sep 2022 01:01:01 GMT",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}{{4xx}}/404?id=1",
+									"host": [
+										"{{host}}{{4xx}}"
+									],
+									"path": [
+										"404"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "401/Unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Fake authentication parameters in header Authorization\", function () {",
+									"    pm.response.to.have.status(401);",
+									"    pm.response.to.have.header(\"WWW-Authenticate\")",
+									"    pm.response.to.have.body();",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "fake_user",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "test",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{4xx}}/read/?id={{create_id}}",
+							"host": [
+								"{{host}}{{4xx}}"
+							],
+							"path": [
+								"read",
+								""
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{create_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "403/Forbidden",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User with login 'user' has no permissions to do DELETE requests\", function () {",
+									"    pm.response.to.have.status(403);",
+									"    pm.response.to.have.body();",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "user",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "test",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{4xx}}/403",
+							"host": [
+								"{{host}}{{4xx}}"
+							],
+							"path": [
+								"403"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5xx",
+			"item": [
+				{
+					"name": "500/Internal Server Error",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Internal Server Error\", function () {",
+									"    pm.response.to.have.status(500);",
+									"    pm.response.to.have.body();",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{5xx}}/500",
+							"host": [
+								"{{host}}{{5xx}}"
+							],
+							"path": [
+								"500"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "502/Bad Gateway",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Bad Gateway\", function () {",
+									"    pm.response.to.have.status(502);",
+									"    pm.response.to.have.body();",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/some-where-else/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"some-where-else",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "503/Service Unavailable",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Server is temporarily overloaded, and unable to handle the request. Return 503\", function () {",
+									"    pm.response.to.have.status(503);",
+									"    pm.response.to.have.body();",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{5xx}}/503",
+							"host": [
+								"{{host}}{{5xx}}"
+							],
+							"path": [
+								"503"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "504/Gateway Timeout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Gateway Timeout\", function () {",
+									"    pm.response.to.have.status(504);",
+									"    pm.response.to.have.body();",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{5xx}}/504",
+							"host": [
+								"{{host}}{{5xx}}"
+							],
+							"path": [
+								"504"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": ""
+		},
+		{
+			"key": "create_id",
+			"value": "1"
+		},
+		{
+			"key": "create_id",
+			"value": ""
+		},
+		{
+			"key": "temp_create_id",
+			"value": ""
+		}
+	]
+}

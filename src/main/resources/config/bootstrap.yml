@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: skillbox-http-status
+  profiles:
+    active: local
